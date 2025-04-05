@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #5b0b0b, #fffafa);
+    color: #333;
+    padding: 40px;
+}
+
+/* Main Container */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px;
+    background-color: #fbf7f7;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Header */
+h2 {
+    text-align: center;
+    color: #c0392b;
+    font-size: 32px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+h2::after {
+    content: "🩸";
+    font-size: 28px;
+    position: absolute;
+    right: 10px;
+}
+
+/* Section Styles */
+section {
+    padding: 30px;
+    border-radius: 16px;
+    background-color: #fefefe;
+    border: 2px solid #f5c6cb;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+section:hover {
+    transform: scale(1.01);
+}
+
+section h3 {
+    color: #c0392b;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-left: 6px solid #e74c3c;
+    padding-left: 10px;
+}
+
+/* Labels and Inputs */
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #fdfdfd;
+    transition: border 0.3s;
+}
+
+input:focus, select:focus {
+    border: 1px solid #e74c3c;
+    outline: none;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.2);
+}
+
+input[readonly] {
+    background-color: #eee;
+}
+
+/* Buttons */
+button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c0392b;
+}
+
+#editButton {
+    background-color: #27ae60;
+    padding: 10px 16px;
+    width: auto;
+}
+
+#editButton:hover {
+    background-color: #1e8449;
+}
+
+/* Result Texts */
+#result {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #27ae60;
+}
+
+#bloodVolume {
+    text-align: center;
+    font-size: 18px;
+    color: #7f8c8d;
+}
+#eligibility-section, #personal-section {
+    display: none;
+  }
+  

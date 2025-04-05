@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+body{
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #fff267, #fffafa);
+
+}
+
+/* Animated Heading */
+h2 {
+    font-size: 36px;
+    text-align: center;
+    color: rgb(255, 7, 7);
+    margin-bottom: 40px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: slideFadeIn 1.2s ease-out forwards;
+  }
+  
+  /* Keyframes for animation */
+  @keyframes slideFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Optional: Add a blood drop icon after heading */
+  h2::after {
+    content: '🩸';
+    position: absolute;
+    right: -30px;
+    top: 0;
+    font-size: 30px;
+    animation: dropBounce 1.5s ease infinite;
+  }
+  
+  /* Bounce effect for icon */
+  @keyframes dropBounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(6px);
+    }
+  }
+  
+.diet-container {
+   
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    max-width: 1200px;
+    margin: auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    gap: 30px;
+  }
+  
+  /* Make both image and form 50% */
+  .diet-image,
+  .diet-form {
+    flex: 1;
+  }
+  
+  /* Make the image fill its container */
+  .diet-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+  }
+  
+  /* Form styling */
+  .diet-form label {
+    display: block;
+    margin-bottom: -22px;
+    font-weight: 600;
+  }
+  
+  .diet-form input,
+  .diet-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .diet-form button {
+    padding: 12px 20px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .diet-form button:hover {
+    background-color: rgb(250, 255, 96);
+    color: black;
+  }
+  
+  .diet-form h3 {
+    margin-top: 30px;
+    color: #27ae60;
+  }
+  
+  #output {
+    margin-top: 10px;
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .diet-container {
+      flex-direction: column;
+    }
+  
+    .diet-image,
+    .diet-form {
+      width: 100%;
+    }
+  
+    .diet-image img {
+      height: auto;
+    }
+  }
+  

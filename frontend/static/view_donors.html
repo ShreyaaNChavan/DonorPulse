@@ -1,0 +1,90 @@
+<!-- view_donors.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>View Donors</title>
+    <link rel="stylesheet" href="/frontend/css/viewDonor.css">
+</head>
+
+<body>
+    <h2>Donors with Token Status: Given</h2>
+    <table id="donorTable">
+        <thead>
+            <tr>
+                <th>Aadhar Number</th>
+                <th>Donor Name</th>
+                <th>Token Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button id="editBtn">Update Token Status to "Donated Blood"</button>
+
+    <script>
+        let selectedRow = null;
+        let selectedAadhar = null;
+
+        function fetchDonors() {
+            fetch("http://localhost/blood_donation/backend/get_given_donors.php")
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#donorTable tbody");
+                    tbody.innerHTML = "";
+
+                    data.forEach(donor => {
+                        const row = document.createElement("tr");
+
+
+                        row.innerHTML = `
+                        <td>${donor.Adhar}</td>
+                        <td>${donor.Name}</td>
+                        <td>${donor.Token_Status}</td>
+                    `;
+
+
+                        row.addEventListener("click", () => {
+                            document.querySelectorAll("tr").forEach(r => r.classList.remove("selected"));
+                            row.classList.add("selected");
+                            selectedRow = row;
+                            selectedAadhar = donor.Adhar;
+                        });
+
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+
+        document.getElementById("editBtn").addEventListener("click", () => {
+            if (!selectedAadhar) {
+                alert("⚠️ Please select a donor row to update.");
+                return;
+            }
+
+            fetch("http://localhost/blood_donation/backend/update_token_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ aadhar: selectedAadhar })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("✅ Token status updated successfully.");
+                        fetchDonors();
+                    } else {
+                        alert("❌ Failed to update token status.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("❌ Error updating token status.");
+                });
+        });
+
+        window.onload = fetchDonors;
+    </script>
+</body>
+
+</html>

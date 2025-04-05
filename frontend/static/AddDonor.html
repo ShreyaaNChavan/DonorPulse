@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Eligibility</title>
+    <link rel="stylesheet" href="/frontend/css/addDonor.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Check Blood Donation Eligibility</h2>
+        <form id="donorForm" action="http://localhost/blood_donation/backend/save_donor.php" method="POST">
+
+            <h3>🧾 Aadhar Check</h3>
+            <label>Aadhar Number:</label>
+            <input type="text" name="aadhar" id="aadhar" pattern="\d{12}" required placeholder="XXXX XXXX XXXX XXXX"
+                title="Aadhar must be 12 digits">
+
+            <label>Existed?</label>
+            <input type="text" id="exist" placeholder="Checking existed or not" readonly>
+
+            <div id="eligibility-section">
+                <h3>👕 BMI Calculation</h3>
+                <label>Gender:</label>
+                <select name="gender" id="gender" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label>Height (cm):</label>
+                <input type="number" name="height" id="height" placeholder="Enter height in cm" required>
+
+                <label>Weight (kg):</label>
+                <input type="number" name="weight" id="weight" placeholder="Enter weight in kg" required>
+
+                <label>Blood Group:</label>
+                <select name="bloodGroup" id="bloodGroup" required>
+                    <option value="">Select</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+
+                <label>Age:</label>
+                <input type="number" name="age" id="age" placeholder="Enter age" required>
+
+                <label>BMI:</label>
+                <input type="text" name="bmi" id="bmi" readonly>
+                <button type="button" onclick="calculateBMI()">Calculate BMI</button>
+
+                <button type="button" onclick="checkEligibility()">Check Eligibility</button>
+
+                <h3 id="result"></h3>
+                <p id="bloodVolume"></p>
+            </div>
+
+            <div id="personal-section">
+                <h3>🧑‍🎓 Personal Details</h3>
+
+                <label>Name:</label>
+                <input type="text" name="name" id="name" placeholder="Enter your name" required>
+
+                <label>Date of Birth:</label>
+                <input type="date" name="dob" id="dob" required>
+
+                <label>Mobile Number:</label>
+                <input type="text" name="mobile" id="mobile" pattern="\d{10}" required placeholder="Enter mobile number"
+                    title="Mobile must be 10 digits">
+
+                <label>Token:</label>
+                <input type="text" name="token" id="token" readonly>
+
+                <label>Token Status:</label>
+                <input type="text" name="tokenStatus" id="tokenStatus" readonly>
+
+                <label>Blood Volume (ml):</label>
+                <input type="text" name="bloodVolume" id="bloodVolumeField" readonly>
+
+                <label>Email ID:</label>
+                <input type="email" name="email" id="email" required placeholder="Enter email">
+
+                <label>Address:</label>
+                <input type="text" name="address" id="address" placeholder="Enter address" required>
+
+                <label>Date & Time:</label>
+                <input type="text" name="dateTime" id="dateTime" readonly>
+            </div>
+
+
+            <button type="submit">Submit</button>
+            <button type="button" id="editButton">✏ Edit</button>
+        </form>
+    </div>
+
+    <script>
+        let eligibilityChecked = false;
+        let aadharExists = true;
+        let isEligibleToDonate = false;
+
+        document.getElementById("aadhar").addEventListener("blur", function () {
+            const aadhar = this.value.trim();
+            if (aadhar.length !== 12) return;
+
+            fetch("http://localhost/blood_donation/backend/check_aadhar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ aadhar })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        aadharExists = true;
+                        document.getElementById("exist").value = "Already Exists ❌";
+
+                        const lastDonationDate = new Date(data.lastDonationDate);
+                        const today = new Date();
+                        const diffDays = Math.floor((today - lastDonationDate) / (1000 * 60 * 60 * 24));
+
+                        if (diffDays < 45) {
+                            isEligibleToDonate = false;
+                            alert(`⚠️ Donor must wait ${45 - diffDays} more days to donate again.`);
+                            resetSections();
+                        } else {
+                            isEligibleToDonate = true;
+                            alert(`🩸 Eligible returning donor. Last donation was ${diffDays} days ago.`);
+                            showSection("eligibility-section");
+                            enableSection("eligibility-section");
+                            disableSection("personal-section");
+
+                            if (data.donorData) {
+                                document.getElementById("name").value = data.donorData.name || "";
+                                document.getElementById("dob").value = data.donorData.dob || "";
+                                document.getElementById("mobile").value = data.donorData.mobile || "";
+                                document.getElementById("email").value = data.donorData.email || "";
+                                document.getElementById("address").value = data.donorData.address || "";
+                            }
+                        }
+                    } else {
+                        aadharExists = false;
+                        isEligibleToDonate = true;
+                        document.getElementById("exist").value = "Not Found ✅";
+                        showSection("eligibility-section");
+                        enableSection("eligibility-section");
+                        disableSection("personal-section");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking Aadhar:", error);
+                    alert("Error checking Aadhar. Please try again.");
+                });
+        });
+
+        function checkEligibility() {
+            let gender = document.getElementById("gender").value;
+            let age = document.getElementById("age").value;
+            let bmi = document.getElementById("bmi").value;
+
+            if (!gender || !age || !bmi) {
+                alert("⚠️ Please fill all fields and calculate BMI first.");
+                return;
+            }
+
+            fetch("http://localhost:5000/check-eligibility", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ gender, age, bmi })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").textContent = data.message;
+
+                    const isEligible = data.eligible || data.message.toLowerCase().includes("eligible");
+
+                    if (isEligible && data.bloodVolume) {
+                        document.getElementById("bloodVolumeField").value = data.bloodVolume;
+                        document.getElementById("bloodVolume").textContent = `You can donate: ${data.bloodVolume} ml`;
+                        eligibilityChecked = true;
+                        alert("✅ " + data.message + "\n🩸 Blood Volume: " + data.bloodVolume + " ml");
+
+                        showSection("personal-section");
+                        enableSection("personal-section");
+                    } else {
+                        document.getElementById("bloodVolumeField").value = "";
+                        document.getElementById("bloodVolume").textContent = "";
+                        eligibilityChecked = false;
+                        alert("❌ " + data.message);
+                        disableSection("personal-section");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while checking eligibility.");
+                });
+        }
+
+        function calculateBMI() {
+            let height = parseFloat(document.getElementById("height").value) / 100;
+            let weight = parseFloat(document.getElementById("weight").value);
+            if (height > 0 && weight > 0) {
+                let bmi = (weight / (height * height)).toFixed(2);
+                document.getElementById("bmi").value = bmi;
+            } else {
+                alert("Please enter valid height and weight.");
+            }
+        }
+
+        function generateToken() {
+            const token = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById("token").value = token;
+            document.getElementById("tokenStatus").value = "Given";
+        }
+
+        function updateDateTime() {
+            let now = new Date();
+            let formattedDateTime = now.toLocaleString();
+            document.getElementById("dateTime").value = formattedDateTime;
+        }
+
+        document.getElementById("donorForm").addEventListener("submit", function (event) {
+            if (!eligibilityChecked) {
+                event.preventDefault();
+                alert("⚠️ Please check eligibility before submitting the form.");
+            } else if (aadharExists && !isEligibleToDonate) {
+                event.preventDefault();
+                alert("⚠️ Aadhar exists and donor is not eligible yet.");
+            }
+        });
+
+        function showSection(id) {
+            document.getElementById(id).style.display = "block";
+        }
+
+        function hideSection(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        function disableSection(id) {
+            const inputs = document.querySelectorAll(`#${id} input, #${id} select`);
+            inputs.forEach(input => input.setAttribute("readonly", true));
+        }
+
+        function enableSection(id) {
+            const inputs = document.querySelectorAll(`#${id} input, #${id} select`);
+            inputs.forEach(input => input.removeAttribute("readonly"));
+        }
+
+        function resetSections() {
+            hideSection("eligibility-section");
+            hideSection("personal-section");
+            disableSection("eligibility-section");
+            disableSection("personal-section");
+        }
+
+        document.getElementById("editButton").addEventListener("click", function () {
+            let inputs = document.querySelectorAll("input:not([readonly]), select");
+            inputs.forEach(input => input.removeAttribute("readonly"));
+        });
+
+        window.onload = function () {
+            updateDateTime();
+            generateToken();
+            resetSections();
+        };
+    </script>
+
+
+</body>
+
+</html>

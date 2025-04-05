@@ -1,0 +1,11 @@
+flask 
+pandas 
+scikit-learn
+numpy
+xlrd>=2.0.1
+flask-cors
+flask-sqlalchemy 
+pymysql
+flask
+pymysql
+google-generativeai

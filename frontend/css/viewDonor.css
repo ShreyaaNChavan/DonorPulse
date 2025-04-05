@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+body {
+    font-family: 'Poppins', sans-serif;
+   /* background-color: #fff5f5;*/
+    background: linear-gradient(to left, #fa967d, #fffafa);
+    color: #333;
+    padding: 20px;
+}
+
+/* Section title */
+h2 {
+    color: #b30000;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Table styling */
+#donorTable {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(179, 0, 0, 0.2);
+    background-color: #fffafa;
+    margin-bottom: 20px;
+}
+
+#donorTable thead {
+    background-color: #55dafb;
+    color: rgb(0, 0, 0);
+}
+
+#donorTable th,
+#donorTable td {
+    padding: 12px 15px;
+    border: 1px solid #ffcccc;
+    text-align: center;
+}
+
+#donorTable tbody tr:hover {
+    background-color: #ffe6e6;
+}
+
+/* Button styling */
+#editBtn {
+    font-family: 'Poppins', sans-serif;
+    display: block;
+    margin: 0 auto;
+    padding: 12px 25px;
+    background-color: #cc0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#editBtn:hover {
+    background-color: rgb(250, 255, 96);
+    color: #333;
+}
+
+/* Optional: Make it responsive */
+@media (max-width: 600px) {
+    #donorTable th, #donorTable td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    #editBtn {
+        width: 100%;
+    }
+}
